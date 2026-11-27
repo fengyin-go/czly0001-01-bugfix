@@ -2,5 +2,6 @@
 from __future__ import annotations
 
 from app.routers import resource
+from app.routers import business_api
 
-ROUTERS = [resource]
+ROUTERS = [resource, business_api]

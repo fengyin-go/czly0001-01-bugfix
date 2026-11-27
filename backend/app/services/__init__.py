@@ -45,3 +45,28 @@ SERVICES: dict[str, BaseModuleService] = {
 
 def service_for(module: str) -> BaseModuleService | None:
     return SERVICES.get(module)
+
+
+def _rebuild_services() -> None:
+    """重建服务注册表（测试隔离用）。"""
+    global SERVICES
+    SERVICES = {
+        "strategy_config": StrategyConfigService(),
+        "factor_library": FactorLibraryService(),
+        "backtest_task": BacktestTaskService(),
+        "backtest_report": BacktestReportService(),
+        "signal_sub": SignalSubService(),
+        "risk_rule": RiskRuleService(),
+        "position_snapshot": PositionSnapshotService(),
+        "exchange_binding": ExchangeBindingService(),
+        "trade_instruct": TradeInstructService(),
+        "trade_fill": TradeFillService(),
+        "pnl_settle": PnlSettleService(),
+        "capital_journal": CapitalJournalService(),
+        "strategy_review": StrategyReviewService(),
+        "portfolio_alloc": PortfolioAllocService(),
+        "rebalance_exec": RebalanceExecService(),
+        "market_snapshot": MarketSnapshotService(),
+        "alert_dispatch": AlertDispatchService(),
+        "operation_audit": OperationAuditService(),
+    }

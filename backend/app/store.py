@@ -15,6 +15,11 @@ class Store:
             name: [dict(row) for row in rows] for name, rows in SEED_ROWS.items()
         }
 
+    def clear(self) -> None:
+        """清空所有表数据（测试隔离用）。"""
+        for name in list(self._tables):
+            self._tables[name] = []
+
     def module_names(self) -> list[str]:
         return sorted(self._tables)
 
@@ -26,6 +31,21 @@ class Store:
             if int(row.get("id", 0)) == entry_id:
                 return row
         return None
+
+    def find_by_field(self, module: str, field: str, value: str) -> dict[str, Any] | None:
+        """按指定字段值查找记录。"""
+        for row in self.rows(module):
+            if str(row.get(field, "")) == value:
+                return row
+        return None
+
+    def find_all_by_field(self, module: str, field: str, value: str) -> list[dict[str, Any]]:
+        """按指定字段值查找所有匹配记录。"""
+        return [row for row in self.rows(module) if str(row.get(field, "")) == value]
+
+    def count_by_status(self, module: str, status: str) -> int:
+        """按状态统计记录数。"""
+        return sum(1 for row in self.rows(module) if row.get("status") == status)
 
     def overview(self) -> dict[str, object]:
         modules: list[dict[str, object]] = []
