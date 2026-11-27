@@ -12,19 +12,10 @@
         <button class="btn" data-testid="export" type="button" @click="exportRows">
           导出{{ meta.name }}清单
         </button>
-        <button class="btn ghost" data-testid="toggle-hints" type="button" @click="showHints = !showHints">
-          {{ showHints ? '收起跨模块' : '跨模块依赖' }}
-        </button>
-      </div>
+              </div>
     </header>
 
-    <!-- 跨模块依赖提示面板 -->
-    <CrossModuleHint
-      v-if="showHints && crossRefs.length"
-      :module-key="meta.key"
-      :cross-refs="crossRefs"
-    />
-
+    
     <!-- 状态流转概览 -->
     <div class="status-flow" data-testid="status-flow">
       <span class="flow-label">状态流转：</span>
@@ -144,7 +135,6 @@ import {
   runAction as applyAction,
 } from '@/api/backend-service'
 import type { EntryRow } from '@/data/types'
-import CrossModuleHint from '@/components/CrossModuleHint.vue'
 
 const props = defineProps<{ moduleKey: string }>()
 const meta = moduleMeta(props.moduleKey)
@@ -157,11 +147,8 @@ const filters = ref<Record<string, string>>({})
 const filterFields = meta.fields.slice(0, 3)
 const showCreate = ref(false)
 const creating = ref(false)
-const showHints = ref(false)
 const createValues = ref<Record<string, string>>({})
 
-// 跨模块引用关系
-const crossRefs = ref<{ from: string; to: string; description: string; active: boolean }[]>([])
 
 const stats = computed(() => [
   { label: meta.metrics[0], value: total.value },
@@ -264,19 +251,8 @@ async function reload() {
   }
 }
 
-async function loadCrossRefs() {
-  try {
-    const { loadFullOverview } = await import('@/api/dashboard')
-    const overview = await loadFullOverview()
-    crossRefs.value = overview.cross_module_refs
-  } catch {
-    // 跨模块数据加载失败不影响主流程
-  }
-}
-
 onMounted(() => {
   void reload()
-  void loadCrossRefs()
 })
 </script>
 
